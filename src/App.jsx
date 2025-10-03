@@ -7,7 +7,7 @@ function App() {
   const [prevHarga, setPrevHarga] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const apiKeys = ["goldapi-1xnsdsmgbbicj5-io", "goldapi-1xnsdsmgbca2rn-io"];
+  const apiKeys = ["goldapi-1xnsdsmgbbicj5-io", "goldapi-1xnsdsmgbca2rn-io ", "goldapi-2snvtbdsmgber032-io", "goldapi-913wsmgbes0vt-io", "goldapi-913wsmgbesmmr-io"];
 
   const fetchHarga = async () => {
     try {
@@ -37,7 +37,7 @@ function App() {
         } catch {}
       }
 
-      if (!success) throw new Error("Gagal fetch harga emas");
+      if (!success) throw new Error("Gagal membuat permintaan harga emas");
 
       const usdPerGram24k = data.price_gram_24k;
       const idrPerGram24k = usdPerGram24k * kursIDR;
