@@ -68,14 +68,17 @@ function App() {
     if (harga) {
       const perubahan =
         harga && prevHarga
-          ? ((harga.idrPerGram - prevHarga.idrPerGram) / prevHarga.idrPerGram) * 100
+          ? ((harga.idrPerGram - prevHarga.idrPerGram) / prevHarga.idrPerGram) *
+            100
           : 0;
 
       const symbol = "XAUUSD";
       const value = harga.xauusd.toFixed(2);
       const persen = perubahan.toFixed(2);
 
-      document.title = `${symbol} ${value} (${perubahan >= 0 ? "+" : ""}${persen}%)`;
+      document.title = `${symbol} ${value} (${
+        perubahan >= 0 ? "+" : ""
+      }${persen}%)`;
     }
   }, [harga, prevHarga]);
 
@@ -112,108 +115,147 @@ function App() {
         </div>
       ) : (
         <>
-        
-        {harga && (
-          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-6">
-            {/* Info Pasar */}
-            <div className="bg-white shadow-lg rounded-2xl p-6 border border-yellow-200 flex flex-col gap-4">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">📊 Info Pasar</h2>
-  
-              <div className="flex flex-col gap-3">
-                <div className="flex justify-between border-b">
-                  <span className="font-medium text-gray-600">Kurs USD/IDR</span>
-                  <span className="font-semibold text-gray-800">
-                    Rp {harga.kurs.toLocaleString("id-ID")}
-                  </span>
-                </div>
-  
-                <div className="flex justify-between border-b">
-                  <span className="font-medium text-gray-600">Spot XAU/USD</span>
-                  <span className="font-semibold text-gray-800">
-                    {harga.xauusd.toFixed(2)} USD/oz
-                  </span>
-                </div>
-  
-                <div className="flex justify-between border-b">
-                  <span className="font-medium text-gray-600">Harga 24K/gram</span>
-                  <span className="font-semibold text-gray-800">
-                    Rp {Math.round(harga.idrPerGram).toLocaleString("id-ID")}
-                  </span>
-                </div>
-  
-                {perubahan !== null && (
+          {harga && (
+            <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-6">
+              {/* Info Pasar */}
+              <div className="bg-white shadow-lg rounded-2xl p-6 border border-yellow-200 flex flex-col gap-4">
+                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  📊 Info Pasar
+                </h2>
+
+                <div className="flex flex-col gap-3">
                   <div className="flex justify-between border-b">
-                    <span className="font-medium text-gray-600">Perubahan</span>
-                    <span
-                      className={
-                        perubahan >= 0
-                          ? "text-green-600 font-semibold"
-                          : "text-red-600 font-semibold"
-                      }
-                    >
-                      {perubahan >= 0 ? "⬆️ Naik" : "⬇️ Turun"} {perubahan.toFixed(2)}%
+                    <span className="font-medium text-gray-600">
+                      Kurs USD/IDR
+                    </span>
+                    <span className="font-semibold text-gray-800">
+                      Rp {harga.kurs.toLocaleString("id-ID")}
                     </span>
                   </div>
-                )}
-  
-                <div className="flex justify-between border-b">
-                  <span className="font-medium text-gray-600">Update terakhir</span>
-                  <span className="text-gray-500">{formatTimestamp(harga.timestamp)}</span>
+
+                  <div className="flex justify-between border-b">
+                    <span className="font-medium text-gray-600">
+                      Spot XAU/USD
+                    </span>
+                    <span className="font-semibold text-gray-800">
+                      {harga.xauusd.toFixed(2)} USD/oz
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between border-b">
+                    <span className="font-medium text-gray-600">
+                      Harga 24K/gram
+                    </span>
+                    <span className="font-semibold text-gray-800">
+                      Rp {Math.round(harga.idrPerGram).toLocaleString("id-ID")}
+                    </span>
+                  </div>
+
+                  {perubahan !== null && (
+                    <div className="flex justify-between border-b">
+                      <span className="font-medium text-gray-600">
+                        Perubahan
+                      </span>
+                      <span
+                        className={
+                          perubahan >= 0
+                            ? "text-green-600 font-semibold"
+                            : "text-red-600 font-semibold"
+                        }
+                      >
+                        {perubahan >= 0 ? "⬆️ Naik" : "⬇️ Turun"}{" "}
+                        {perubahan.toFixed(2)}%
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between border-b">
+                    <span className="font-medium text-gray-600">
+                      Update terakhir
+                    </span>
+                    <span className="text-gray-500">
+                      {formatTimestamp(harga.timestamp)}
+                    </span>
+                  </div>
                 </div>
+
+                <button
+                  onClick={fetchHarga}
+                  disabled={loading}
+                  className="mt-4 px-4 w-full py-2 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 text-white rounded-lg shadow transition"
+                >
+                  {loading ? "⏳ Mengambil data..." : "🔄 Refresh"}
+                </button>
               </div>
-  
-              <button
-                onClick={fetchHarga}
-                disabled={loading}
-                className="mt-4 px-4 w-full py-2 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 text-white rounded-lg shadow transition"
-              >
-                {loading ? "⏳ Mengambil data..." : "🔄 Refresh"}
-              </button>
+
+              {/* Simulasi Pegadaian */}
+              <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 shadow-lg rounded-2xl p-6 text-white">
+                <h2 className="text-xl font-bold mb-4">🏦 Simulasi</h2>
+
+                <label className="block mb-3 font-medium">
+                  <div className="flex justify-between items-center">
+                    <p>Berat (gram):</p>
+                    {gram > 1 && (
+                      <button
+                        onClick={() => setGram(1)}
+                        className="text-sm"
+                      >
+                        <p className="cursor-pointer hover:text-gray-200  hover:underline">
+                          Reset
+                        </p>
+                      </button>
+                    )}
+                  </div>
+                  <input
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    max={1000}
+                    value={gram}
+                    onChange={(e) => setGram(Number(e.target.value))}
+                    className="mt-1 w-full outline-yellow-400 border-gray-400 px-2 p-1 text-black rounded border"
+                  />
+                </label>
+
+                <div className="flex justify-between gap-6">
+                  <div>
+                    <p className="text-lg font-semibold">
+                      Harga beli ({gram} gr):{" "}
+                    </p>
+                    <span className="text-2xl">
+                      Rp{" "}
+                      {Number(
+                        (harga.pegadaian.jual * gram).toFixed(0)
+                      ).toLocaleString("id-ID")}
+                    </span>
+                  </div>
+
+                  <div>
+                    <p className="text-lg font-semibold">
+                      Harga jual ({gram} gr):{" "}
+                    </p>
+                    <span className="text-2xl">
+                      Rp{" "}
+                      {Number(
+                        (harga.pegadaian.buyback * gram).toFixed(0)
+                      ).toLocaleString("id-ID")}
+                    </span>
+                  </div>
+                </div>
+
+                <a
+                  href="https://digital.pegadaian.co.id/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-block w-full text-center border-white border px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg shadow transition"
+                >
+                  Lihat Harga Pegadaian
+                </a>
+              </div>
             </div>
-  
-            {/* Simulasi Pegadaian */}
-            <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 shadow-lg rounded-2xl p-6 text-white">
-              <h2 className="text-xl font-bold mb-4">🏦 Simulasi Pegadaian</h2>
-  
-              <label className="block mb-3 font-medium">
-                Berat (gram):
-                <input
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  value={gram}
-                  onChange={(e) => setGram(Number(e.target.value))}
-                  className="ml-2 outline-yellow-400 border-gray-400 px-2 p-1 text-black rounded border"
-                />
-              </label>
-  
-              <p className="text-lg font-semibold">
-                Harga beli ({gram} gr):{" "}
-                <span className="text-2xl">
-                  Rp {Number((harga.pegadaian.jual * gram).toFixed(0)).toLocaleString("id-ID")}
-                </span>
-              </p>
-              <p className="text-lg font-semibold">
-                Harga jual ({gram} gr):{" "}
-                <span className="text-2xl">
-                  Rp {Number((harga.pegadaian.buyback * gram).toFixed(0)).toLocaleString("id-ID")}
-                </span>
-              </p>
-  
-              <a
-                href="https://digital.pegadaian.co.id/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 inline-block w-full text-center border-white border px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg shadow transition"
-              >
-                Lihat Harga Pegadaian
-              </a>
-            </div>
-          </div>
-        )}
+          )}
         </>
       )}
-
 
       {/* Chart */}
       <h2 className="text-2xl font-semibold text-center mt-12 mb-6 text-gray-800">
