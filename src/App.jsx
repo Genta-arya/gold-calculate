@@ -81,6 +81,9 @@ function App() {
       }${persen}%)`;
     }
   }, [harga, prevHarga]);
+  useEffect(() => {
+    fetchHarga();
+  }, []);
 
  
   const perubahan =
