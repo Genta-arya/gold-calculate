@@ -82,12 +82,7 @@ function App() {
     }
   }, [harga, prevHarga]);
 
-  useEffect(() => {
-    fetchHarga();
-    const interval = setInterval(fetchHarga, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
+ 
   const perubahan =
     harga && prevHarga
       ? ((harga.idrPerGram - prevHarga.idrPerGram) / prevHarga.idrPerGram) * 100
