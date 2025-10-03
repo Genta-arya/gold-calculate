@@ -6,14 +6,13 @@ function App() {
   const [gram, setGram] = useState(1);
   const [prevHarga, setPrevHarga] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [showIframe, setShowIframe] = useState(false);
 
   const apiKeys = ["goldapi-1xnsdsmgbbicj5-io", "goldapi-1xnsdsmgbca2rn-io"];
 
   const fetchHarga = async () => {
     try {
       setLoading(true);
-      // --- ambil kurs ---
+      // Ambil kurs USD → IDR
       const kursRes = await fetch(
         "https://api.frankfurter.app/latest?from=USD&to=IDR"
       );
@@ -31,27 +30,18 @@ function App() {
               "Content-Type": "application/json",
             },
           });
-
           if (!res.ok) continue;
           data = await res.json();
           success = true;
           break;
-        } catch {
-
-        }
-        finally {
-
-          
-        }
+        } catch {}
       }
 
       if (!success) throw new Error("Gagal fetch harga emas");
 
-      // langsung pakai price_gram_24k dari API (USD → IDR dikali kurs)
       const usdPerGram24k = data.price_gram_24k;
       const idrPerGram24k = usdPerGram24k * kursIDR;
 
-      // margin ala pegadaian
       const marginJual = 1.039;
       const marginBuyback = 1.002;
 
@@ -64,16 +54,6 @@ function App() {
         xauusd: data.price,
         idrPerGram: idrPerGram24k,
         pegadaian: { jual, buyback },
-        detail: {
-          open: data.open_price,
-          prevClose: data.prev_close_price,
-          high: data.high_price,
-          low: data.low_price,
-          ask: data.ask,
-          bid: data.bid,
-          change: data.ch,
-          changePct: data.chp,
-        },
         timestamp: data.timestamp,
       });
     } catch (err) {
@@ -82,7 +62,8 @@ function App() {
       setLoading(false);
     }
   };
-   // Update title saat harga berubah
+
+  // Update title saat harga berubah
   useEffect(() => {
     if (harga) {
       const perubahan =
@@ -100,7 +81,7 @@ function App() {
 
   useEffect(() => {
     fetchHarga();
-    const interval = setInterval(fetchHarga, 60000); // update tiap 1 menit
+    const interval = setInterval(fetchHarga, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -132,13 +113,11 @@ function App() {
       ) : (
         <>
         
-        {harga ? (
+        {harga && (
           <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-6">
-            {/* Info Pasar Redesigned */}
+            {/* Info Pasar */}
             <div className="bg-white shadow-lg rounded-2xl p-6 border border-yellow-200 flex flex-col gap-4">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">
-                📊 Info Pasar
-              </h2>
+              <h2 className="text-xl font-bold text-gray-800 mb-4">📊 Info Pasar</h2>
   
               <div className="flex flex-col gap-3">
                 <div className="flex justify-between border-b">
@@ -194,9 +173,7 @@ function App() {
   
             {/* Simulasi Pegadaian */}
             <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 shadow-lg rounded-2xl p-6 text-white">
-              <h2 className="text-xl font-bold mb-4">
-                🏦 Simulasi Pegadaian 
-              </h2>
+              <h2 className="text-xl font-bold mb-4">🏦 Simulasi Pegadaian</h2>
   
               <label className="block mb-3 font-medium">
                 Berat (gram):
@@ -213,42 +190,27 @@ function App() {
               <p className="text-lg font-semibold">
                 Harga beli ({gram} gr):{" "}
                 <span className="text-2xl">
-                  Rp{" "}
-                  {Number((harga.pegadaian.jual * gram).toFixed(0)).toLocaleString("id-ID")}
+                  Rp {Number((harga.pegadaian.jual * gram).toFixed(0)).toLocaleString("id-ID")}
                 </span>
               </p>
               <p className="text-lg font-semibold">
                 Harga jual ({gram} gr):{" "}
                 <span className="text-2xl">
-                  Rp{" "}
-                  {Number((harga.pegadaian.buyback * gram).toFixed(0)).toLocaleString("id-ID")}
+                  Rp {Number((harga.pegadaian.buyback * gram).toFixed(0)).toLocaleString("id-ID")}
                 </span>
               </p>
   
-              {/* Tombol iframe Pegadaian */}
-              <div className="mt-4 flex flex-col items-center">
-                <button
-                  onClick={() => setShowIframe(!showIframe)}
-                  className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg shadow transition mb-4"
-                >
-                  {showIframe ? "Tutup Harga Pegadaian" : "Lihat Harga Pegadaian"}
-                </button>
-  
-                {showIframe && (
-                  <div className="w-full max-w-5xl h-[500px] rounded-2xl overflow-hidden shadow-lg border border-gray-200">
-                    <iframe
-                      src="https://digital.pegadaian.co.id/"
-                      className="w-full h-full border-0"
-                      title="Harga Pegadaian"
-                    ></iframe>
-                  </div>
-                )}
-              </div>
+              <a
+                href="https://digital.pegadaian.co.id/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-block w-full text-center border-white border px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg shadow transition"
+              >
+                Lihat Harga Pegadaian
+              </a>
             </div>
           </div>
-        ) : loading ? (
-          <p className="text-center text-gray-500 mt-6">⏳ Menunggu data...</p>
-        ) : null}
+        )}
         </>
       )}
 
