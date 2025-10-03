@@ -102,7 +102,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-gray-100 p-6">
       <h1 className="text-3xl font-extrabold text-center text-yellow-700 mb-8 drop-shadow">
-        💰 Harga Emas Analytic
+        💰 Kalkulator Harga Emas 
       </h1>
 
       {error && <p className="text-red-600 text-center font-medium">{error}</p>}
